@@ -1,7 +1,14 @@
 <%- include('partials/header.ejs'); -%>
 
 <h1>Contact</h1>
-
-<p> <%= contactContent %></p>
+<form class="" action="/contact" method="post">
+    <div class="form-group">
+        <label class="form-label">E-mail</label>
+        <input class="form-control" type="email" name="contact_mail" placeholder="E-mail">
+        <label class="form-label">Query</label>
+        <textarea class="form-control" name="contact_message" placeholder="Message" cols="80" rows="8"></textarea>
+    </div>
+    <button type="submit" name="button" class="btn btn-primary btn-lg">Send Mail </button> 
+</form>
 
 <%- include('partials/footer.ejs'); -%>
