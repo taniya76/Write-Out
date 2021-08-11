@@ -34,7 +34,14 @@ app.get("/", function (req, res) {
     });
   });
 });
-
+app.get("/home", function (req, res) {
+  Post.find({}, function (err, posts) {
+    res.render("home", {
+      startingContent: homeStartingContent,
+      posts: posts
+    });
+  });
+});
 
 app.get("/about", function (req, res) {
   res.render("about");
