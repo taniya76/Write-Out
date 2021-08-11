@@ -36,8 +36,9 @@ app.get("/", function (req, res) {
   });
 });
 
+
 app.get("/about", function (req, res) {
-  res.render("about", { aboutContent: aboutContent });
+  res.render("about");
 });
 
 app.get("/contact", function (req, res) {
@@ -64,12 +65,10 @@ app.get("/posts/:postId", function (req, res) {
   const requestedId = req.params.postId;
 
   Post.findOne({ _id: requestedId }, function (err, post) {
-    // if (!err) {
       res.render("post", {
         title: post.title,
         content: post.content
       });
-    // }
   });
 });
 
