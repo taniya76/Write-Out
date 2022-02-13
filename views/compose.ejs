@@ -4,10 +4,11 @@
 <form class="" action="/compose" method="post">
     <div class="form-group">
         <label class="form-label">Title</label>
-        <input class="form-control" type="text" name="postTitle">
+        <input class="form-control" type="text" name="postTitle" value="<%= Title %> " autocomplete="off">
         <label class="form-label">POST</label>
-        <textarea class="form-control" name="postBody" placeholder="Message" cols="80" rows="8"></textarea>
+        <textarea class="form-control textarea" name="postBody" cols="80" rows="8" autocomplete="off"> <%= Body%> </textarea>
     </div>
+    <input type="hidden" name="postID" value="<%= id%>">
     <button type="submit" name="button" class="btn btn-primary btn-lg">Publish </button> 
 </form>
 

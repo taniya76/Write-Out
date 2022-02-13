@@ -1,6 +1,23 @@
 <%- include('partials/header.ejs'); -%>
 
-<h1 > <%= title %> </h1>
+<h1> <%= title %> </h1>
 <p> <%= content %> </p>
+<form action="/delete" method="post">
+    <div >
+        <input type="hidden" name="deleteButton" value="<%= id%>">
+        <button class="deleteButton btn btn-danger btn-lg" type="submit" > Delete </button>
+    </div>
+</form>
+
+<form action="/update" method="post">
+    <div >
+        <input type="hidden" name="updateButton" value="<%= id%>">
+        <button class="updateButton btn btn-success btn-lg" type="submit" > Update </button>
+    </div>
+</form>
+
+
+
+
 
 <%- include('partials/footer.ejs'); -%>

@@ -1,12 +1,17 @@
 <%- include('partials/header.ejs'); -%>
 
 <h1>Contact</h1>
+
 <form class="" action="/contact" method="post">
     <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input class="form-control" type="text" name="contact_name">
         <label class="form-label">E-mail</label>
-        <input class="form-control" type="email" name="contact_mail" placeholder="E-mail">
-        <label class="form-label">Query</label>
-        <textarea class="form-control" name="contact_message" placeholder="Message" cols="80" rows="8"></textarea>
+        <input class="form-control" type="email" name="contact_mail">
+        <label class="form-label">Subject</label>
+        <input class="form-control" type="text" name="query_subject">
+        <label class="form-label">Enter your Query</label>
+        <textarea class="form-control" name="contact_message" placeholder="Message" cols="80" rows="5"></textarea>
     </div>
     <button type="submit" name="button" class="btn btn-primary btn-lg">Send Mail </button> 
 </form>

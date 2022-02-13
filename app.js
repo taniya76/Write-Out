@@ -5,6 +5,8 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const ejs = require("ejs");
 const _ = require("lodash");
+// "use strict";
+const nodemailer = require("nodemailer");
 
 
 const homeStartingContent = "This app can be your friend, here you can add your Daily posts";
@@ -16,15 +18,45 @@ app.set('view engine', 'ejs');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
-mongoose.connect("mongodb+srv://admin-taniya:SrvNiya767@cluster0.z8u2a.mongodb.net/blogDB", { useUnifiedTopology: true, useNewUrlParser: true });
+mongoose.connect("mongodb+srv://admin-taniya:SrvNiya767@cluster0.z8u2a.mongodb.net/blogDB", { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false });
 
 //creating schema for db
 const postSchema = {
   title: String,
   content: String
-};
+}
 // creating model 
 const Post = mongoose.model("Post", postSchema);
+
+let transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'www.taniyamittalhgn@gmail.com',
+    pass: 'SrvNiya67#'
+  }
+});
+// async..await is not allowed in global scope, must use a wrapper
+async function sent_mail(contact_name, contact_mail, query_subject, contact_message) {
+
+  var mailOptions = {
+    from: `"User" <${contact_name}>`, // sender Name
+    to: 'taniyamittalhgn@gmail.com', // list of receivers
+    subject: `${query_subject}`,
+    template: 'email',
+    text: `Sender of the mail is ${contact_mail}
+    ${contact_message}`
+
+  };
+
+  // trigger the sending of the E-mail
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      return console.log(error);
+    }
+    console.log('Message sent: ' + info.response);
+  });
+}
+
 
 app.get("/", function (req, res) {
   Post.find({}, function (err, posts) {
@@ -42,13 +74,14 @@ app.get("/contact", function (req, res) {
   res.render("contact", { contactContent: contactContent });
 });
 
-app.post("/contact",function(req,res){
-    console.log(req.body.contact_mail,req.body.contact_message);
-    res.redirect("/contact");
+app.post("/contact", function (req, res) {
+  // console.log(req.body.contact_name,req.body.contact_mail,req.body.query_subject, req.body.contact_message);
+  sent_mail(req.body.contact_name, req.body.contact_mail, req.body.query_subject, req.body.contact_message);
+  res.redirect("/contact");
 });
 
 app.get("/compose", function (req, res) {
-  res.render("compose");
+  res.render("compose", { Title: "", Body: "", id: "" });
 });
 
 app.post("/compose", function (req, res) {
@@ -56,23 +89,62 @@ app.post("/compose", function (req, res) {
     title: req.body.postTitle,
     content: req.body.postBody
   });
-  post.save(function (err) {
-    if (!err) {
-      res.redirect("/");
-    }
-  });
+  const postID = req.body.postID;
+  console.log(postID)
+  if (postID == "") {
+    post.save(function (err) {
+      if (!err) {
+        res.redirect("/");
+      }
+    });
+  } else {
+    Post.findByIdAndUpdate(postID, { title: req.body.postTitle, content: req.body.postBody }, function (err) {
+      if (!err) {
+        console.log("Successfully updated.");
+        res.redirect("/posts/" + postID);
+      }
+    });
+  }
 });
 
 app.get("/posts/:postId", function (req, res) {
   const requestedId = req.params.postId;
 
   Post.findOne({ _id: requestedId }, function (err, post) {
-      res.render("post", {
-        title: post.title,
-        content: post.content
-      });
+    res.render("post", {
+      title: post.title,
+      content: post.content,
+      id: post._id
+    });
   });
 });
+
+app.post("/delete", function (req, res) {
+  const deletePostId = req.body.deleteButton;
+  console.log(deletePostId);
+
+  Post.findByIdAndRemove(deletePostId, function (err) {
+    if (!err) {
+      console.log("Successfully deleted checked item.");
+      res.redirect("/");
+    }
+  });
+});
+
+
+app.post("/update", function (req, res) {
+  const updatePostId = req.body.updateButton;
+  console.log(updatePostId);
+  Post.findOne({ _id: updatePostId }, function (err, post) {
+    res.render("compose", {
+      Title: post.title,
+      Body: post.content,
+      id: post._id
+    });
+  });
+  // res.redirect("/");
+});
+
 
 app.listen(process.env.PORT || 3000, function () {
   console.log("Server started on port 3000");
